@@ -40,6 +40,11 @@ ctx.moveTo(center.x + 30*Math.sin(DEG2RAD*240.0), center.y + 30*Math.cos(DEG2RAD
 ctx.arc(center.x + 30*Math.sin(DEG2RAD*240.0), center.y + 30*Math.cos(DEG2RAD*240.0), 10, 0, TWOPI)
 ctx.fill()
 
+
+ctx.moveTo(center.x + 30*Math.sin(DEG2RAD*0), center.y + 30*Math.cos(DEG2RAD*0))
+ctx.arc(center.x + 30*Math.sin(DEG2RAD*0), center.y + 30*Math.cos(DEG2RAD*0), 10, 0, TWOPI)
+ctx.fill()
+
 /*ctx.beginPath()
 ctx.fillStyle = 'black'
 ctx.moveTo(center.x, center.y)
