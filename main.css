@@ -1,0 +1,9 @@
+#cvs {
+  border: 1px solid gray;
+}
+#bitcvs {
+  border: 1px solid pink;
+}
+#output {
+	font-family: monospace;
+}
