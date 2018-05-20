@@ -1,12 +1,114 @@
-<body>
+<head>
 
+   	<link rel="stylesheet" type="text/css" href="css/bulma.min.css">
    	<link rel="stylesheet" type="text/css" href="main.css">
+	<!--<script src="js/render.js" type="text/javascript"></script>-->
+</head>
+<body style="padding-top: 10px;">
 
-	<canvas id="cvs"></canvas>
-	<canvas id="bitcvs"></canvas>
+<div class="container">
+	<h1 class="title">Universal Turning Machine</h1>
 
-	<div id="output"></div>
+<div class="columns">
+  <div class="column">
+  	  	<div class="tabs">
+  <ul>
+    <li class="is-active settings-tab"><a data-target="canvas3d">Options</a></li>
+  </ul>
+</div>
+	<div class="field is-horizontal">
+	  <div class="field-label is-normal">
+	    <label class="label">Diameter</label>
+	  </div>
+	  <div class="field-body">
+	    <div class="field">
+	      <p class="control">
+	        <input id="option-diameter" class="input is-rounded opt-num" type="number" value="1.5">
+	      </p>
+	    </div>
+	  </div>
+	</div>
+	<div class="field is-horizontal">
+	  <div class="field-label is-normal">
+	    <label class="label">Bit</label>
+	  </div>
+	  <div class="field-body">
+	    <div class="field">
+	      <p class="control">
+	        <input id="option-bit-diameter" class="input is-rounded opt-num" type="number" value="0.125">
+	      </p>
+	    </div>
+	  </div>
+	</div>
+	<div class="field is-horizontal">
+	  <div class="field-label is-normal">
+	    <label class="label">Length</label>
+	  </div>
+	  <div class="field-body">
+	    <div class="field">
+	      <p class="control">
+	        <input id="option-length" class="input is-rounded opt-num" type="number" value="6">
+	      </p>
+	    </div>
+	  </div>
+	</div>
+	<div class="field is-horizontal">
+	  <div class="field-label is-normal">
+	    <label class="label">Turns</label>
+	  </div>
+	  <div class="field-body">
+	    <div class="field">
+	      <p class="control">
+	        <input id="option-turns" class="input is-rounded opt-num" type="number" value="2">
+	      </p>
+	    </div>
+	  </div>
+	</div>
 
+	<div class="field is-horizontal">
+	  <div class="field-label is-normal">
+	    <label class="label">Type</label>
+	  </div>
+	  <div class="field-body">
+	    <div class="select">
+  			<select>
+    			<option>Helix</option>
+    			<option>Faceted</option>
+  			</select>
+		</div>
+	  </div>
+	</div>
+
+	<div class="field is-horizontal">
+	  <div class="field-label is-normal">
+	    <label class="label">&nbsp;</label>
+	  </div>
+	  <div class="field-body">
+	    <a class="button btn-primary" id="btn-update">Update</a>
+	  </div>
+	</div>
+  </div>
+
+  <div class="column">
+  	<div class="tabs">
+  <ul>
+    <li class="is-active view-tab"><a data-target="canvas3d">3D</a></li>
+    <li><a class="view-tab" data-target="cvs">Cross Section</a></li>
+    <li><a class="view-tab" data-target="bitcvs">Actual</a></li>
+    <li><a class="view-tab" data-target="output">Code</a></li>
+
+  </ul>
+</div>
+	<canvas class="view-pane" id="cvs" style="display:none; width:400; height: 400;"></canvas>
+	<canvas class="view-pane" id="bitcvs" style="display:none; width:400; height: 400;"></canvas>
+	<div class="view-pane" id="canvas3d" style="width: 400; height: 400;"></div>
+	<div class="view-pane" id="output" style="display:none"></div>
+  </div>
+</div>
+</div>
+	<script src="js/three.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/92/three.min.js" type="text/javascript"></script>
+	<script src="js/OrbitControls.js" type="text/javascript"> </script>
 	<script src="toolpath.js" type="text/javascript"> </script>
 	<script src="main.js" type="text/javascript"> </script>
 
