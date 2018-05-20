@@ -27,17 +27,17 @@ function TurningMachine(sourceCanvas, options) {
   this.crossSection = this._computeCrossSectionToolpath();
 }
 
-TurningMachine.prototype._testCut = function(bitDiameterPx, depth) {
+TurningMachine.prototype._testCut = function(cvs, bitDiameterPx, depth) {
 
   // Get the canvas element and set its dimensions
   var bitCanvas = this.bitCanvas || document.createElement('canvas');
   bitCanvas.width = this._bitDiameterPx
-  bitCanvas.height = this.sourceCanvas.height/2
+  bitCanvas.height = cvs.height/2
   var bitContext = bitCanvas.getContext('2d')
   
   var center = {
-    x : this.sourceCanvas.width/2,
-    y : this.sourceCanvas.height/2
+    x : cvs.width/2,
+    y : cvs.height/2
   }
 
   // Draw the bit silhouette
@@ -50,7 +50,7 @@ TurningMachine.prototype._testCut = function(bitDiameterPx, depth) {
   
   // Draw the original image, with the composition set to only keep pixels where there's overlap
   bitContext.globalCompositeOperation = 'source-in'
-  bitContext.drawImage(this.sourceCanvas, center.x-bitDiameterPx/2, 0, bitDiameterPx, this.sourceCanvas.height/2, 0,0,bitDiameterPx, this.sourceCanvas.height/2)
+  bitContext.drawImage(cvs, center.x-bitDiameterPx/2, 0, bitDiameterPx, cvs.height/2, 0,0,bitDiameterPx, cvs.height/2)
 
   // Test for *any* pixels in the image.  If so, there is overlap, and the bit is in the material
   var imgData = bitContext.getImageData(0,0, bitDiameterPx, depth);
@@ -83,17 +83,17 @@ TurningMachine.prototype._getSourceDiameter = function() {
   return 2*radius;
 }
 
-TurningMachine.prototype._findDepth = function(bitDiameter) {
+TurningMachine.prototype._findDepth = function(cvs, bitDiameter) {
   
   var l = 1
-  var r = (this.sourceCanvas.height/2 + 1)
+  var r = (cvs.height/2 + 1)
   // Binary search for a bit hit
   while(true) {
     if(l > r) {
-      return (this.sourceCanvas.height/2 - (m-1))
+      return (cvs.height/2 - (m-1))
     }
     var m = Math.floor((l+r)/2)
-    if(this._testCut(bitDiameter, m)) {
+    if(this._testCut(cvs, bitDiameter, m)) {
       r = m - 1
     } else {
       l = m + 1
@@ -118,14 +118,15 @@ TurningMachine.prototype._computeCrossSectionToolpath = function() {
   while(angle < 360) {
     var rot = angle*DEG2RAD;
     ctx.setTransform(1, 0, 0, 1, 0, 0);
-    ctx.clearRect(0,0,this.sourceCanvas.width,this.sourceCanvas.height)
+    ctx.clearRect(0,0,memoryCanvas.width,memoryCanvas.height)
 
     //Translate to the origin, rotate, translate back
     ctx.translate(this._center.x,this._center.y)
     ctx.rotate(rot);
     ctx.translate(-this._center.x,-this._center.y)
-    ctx.drawImage(memoryCanvas,0,0,this.sourceCanvas.width, this.sourceCanvas.height)
-    result.push({theta:angle*DEG2RAD, r:this._findDepth(this._bitDiameterPx)/this._pixelsPerInch})
+    ctx.drawImage(this.sourceCanvas,0,0,this.sourceCanvas.width, this.sourceCanvas.height)
+
+    result.push({theta:angle*DEG2RAD, r:this._findDepth(memoryCanvas, this._bitDiameterPx)/this._pixelsPerInch})
     angle += as;
   }
   return result;
