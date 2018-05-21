@@ -52,8 +52,8 @@ function makePart(options) {
 	var ctx = canvas.getContext('2d')
 
 	// Double Helix
-	ctx.arc(center.x-40, center.y, 70, 0, TWOPI)
-	ctx.arc(center.x+40, center.y, 70, 0, TWOPI)
+	ctx.arc(center.x-50, center.y, 80, 0, TWOPI)
+	ctx.arc(center.x+50, center.y, 80, 0, TWOPI)
 	ctx.fill()
 	
 
@@ -102,8 +102,8 @@ function makePart(options) {
 	var animate = function () {
 	        requestAnimationFrame( animate );
 
-	        //object.rotation.x += 0.01;
-	        //object.rotation.y += 0.01;
+	        object.rotation.x += 0.01;
+	        object.rotation.y += 0.01;
 
 	        renderer.render(scene, camera);
 	};
@@ -199,7 +199,7 @@ function setup3DView() {
 
 	camera.add(pointLight)
 
-	scene.add(pointLight)
+	//scene.add(pointLight)
 	scene.add(ambientLight);
 	scene.add(directionalLight);
 
@@ -259,7 +259,7 @@ function make3DModel(t) {
 			geom.faces.push(faces[0])
 			geom.faces.push(faces[1])
 		}
-		faces = createFaces(s, 0, points.length-1)
+		faces = createFaces(s, points.length-1,0)
 		geom.faces.push(faces[0])
 		geom.faces.push(faces[1])
 	}
