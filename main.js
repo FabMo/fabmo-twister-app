@@ -6,9 +6,10 @@ var RAD2DEG = 1.0/DEG2RAD
 var TWOPI = 2.0*Math.PI
 
 var scene, camera, renderer;
+var turningMachine;
 
 function write(s) {
-  document.getElementById('output').innerHTML += (s + '</br>')
+  document.getElementById('output').innerHTML = s
 }
 
 function getOptions() {
@@ -79,11 +80,11 @@ function makePart(options) {
 	ctx.arc(center.x + R*Math.sin(DEG2RAD*0), center.y + R*Math.cos(DEG2RAD*0), 10, 0, TWOPI)
 	ctx.fill()
 */
-	var t = new TurningMachine(canvas, options);
+	turningMachine = new TurningMachine(canvas, options);
 
 
-	t.render(document.getElementById('bitcvs'))
-	var geom = make3DModel(t);
+	turningMachine.render(document.getElementById('bitcvs'))
+	var geom = make3DModel(turningMachine);
 
     var selectedObject = scene.getObjectByName('subject');
     scene.remove( selectedObject );
@@ -119,7 +120,7 @@ function makePart(options) {
 	}
 
 	renderer.render(scene, camera)
-	camera.position.z = t.length*0.75;
+	camera.position.z = turningMachine.length*0.75;
 
 	//animateControls();
 	animate()
@@ -307,6 +308,7 @@ setup3DView();
 
 document.getElementById('btn-update').addEventListener('click', function() {
 	makePart(getOptions());
+	write(turningMachine.postSBP())
 });
 
 
