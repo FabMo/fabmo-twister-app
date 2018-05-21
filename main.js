@@ -21,6 +21,7 @@ function getOptions() {
 	for(var i=0; i<els.length; i++){
 		options[els[i].id.replace(/^(option-)/,"")] = parseFloat(els[i].value);
 	}
+	console.info(options)
 	return options;
 }
 
@@ -88,12 +89,14 @@ function makePart(options) {
 	t.render(document.getElementById('bitcvs'))
 	var geom = make3DModel(t);
 
+    var selectedObject = scene.getObjectByName('subject');
+    scene.remove( selectedObject );
+
 	//var meshMaterial = new THREE.MeshLambertMaterial({ color: 0xc6aa79, side:THREE.DoubleSide})
 	//var meshMaterial = new THREE.MeshToonMaterial({color: 0xc6aa79, side:THREE.DoubleSide})
 	var meshMaterial = new THREE.MeshPhongMaterial({color: 0xc6aa79, side:THREE.DoubleSide})
-
 	var meshObject = new THREE.Mesh(geom, meshMaterial);
-
+	meshObject.name = 'subject'
 	scene.add(meshObject);
 	//scene.add(pointsObject);
 
@@ -113,7 +116,7 @@ function makePart(options) {
 		requestAnimationFrame( animateControls );
 
 		// required if controls.enableDamping or controls.autoRotate are set to true
-		controls.update();
+		//controls.update();
 
 		renderer.render( scene, camera );
 
@@ -199,12 +202,12 @@ function setup3DView() {
 
 	camera.add(pointLight)
 
-	//scene.add(pointLight)
+	scene.add(pointLight)
 	scene.add(ambientLight);
 	scene.add(directionalLight);
 
 
-	var controls = new THREE.OrbitControls( camera );
+	//var controls = new THREE.OrbitControls( camera );
 
 	renderer.setSize( container.offsetWidth, container.offsetHeight );
 	container.appendChild( renderer.domElement );
@@ -217,7 +220,7 @@ function make3DModel(t) {
 	var points3d = []
 
 	var STEPS = 100
-	var dt = TWOPI*TURNS/STEPS
+	var dt = TWOPI*t.turns/STEPS
 	var dl = t.length/STEPS
 
 	function rotate(pt, t) {
@@ -266,9 +269,39 @@ function make3DModel(t) {
 
 	geom.computeFaceNormals()
 	geom.computeVertexNormals()
-	geom.translate(0,0,-t.length/2.0)
+	//geom.uvsNeedUpdate = true;
 
-	return geom
+	geom.translate(0,0,-t.length/2.0)
+	//geom.updateMatrix();
+
+	var endcapRadius = 1.01*t.stockDiameter/2.0;
+	var endcapThickness = endcapRadius/2.0;
+
+	var c1 = new THREE.CylinderGeometry( endcapRadius, endcapRadius, endcapThickness, 64 );
+	c1.rotateX(Math.PI/2);
+	c1.translate(0,0,t.length/2 - 0.01*endcapThickness)
+	c1.faceVertexUvs = [[]]
+
+	var c2 = new THREE.CylinderGeometry( endcapRadius, endcapRadius, endcapThickness, 64 );
+	c2.rotateX(-Math.PI/2);
+	c2.translate(0,0,-t.length/2 + 0.01*endcapThickness)
+	c2.faceVertexUvs = [[]]
+
+	//c1.uvsNeedUpdate = true;
+	//console.log('c1uvs: ', c1.faceVertexUvs)
+
+	//c1.updateMatrix()
+
+
+
+	var retval = new THREE.Geometry()
+
+	retval.merge(geom, geom.matrix)
+	retval.merge(c1, c1.matrix)
+	retval.merge(c2, c2.matrix)
+
+
+	return retval
 }
 
 setupUI();

@@ -23,7 +23,7 @@ function TurningMachine(sourceCanvas, options) {
   console.log(this._sourceDiameter)
   console.log(this._pixelsPerInch)
   console.log(this._bitDiameterPx)
-
+  console.log("TURNS: " + this.turns)
   this.crossSection = this._computeCrossSectionToolpath();
 }
 
