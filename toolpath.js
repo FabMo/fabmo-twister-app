@@ -55,7 +55,7 @@ TurningMachine.prototype._testCut = function(cvs, bitDiameterPx, depth) {
   // Test for *any* pixels in the image.  If so, there is overlap, and the bit is in the material
   var imgData = bitContext.getImageData(0,0, bitDiameterPx, depth);
   for(var i=3; i<imgData.data.length; i+=4) {
-    if(imgData.data[i] !== 0) {
+    if(imgData.data[i] > 128) {
       return true;
     }
   }
@@ -70,7 +70,7 @@ TurningMachine.prototype._getSourceDiameter = function() {
   var imgData = ctx.getImageData(0,0,this.sourceCanvas.width, this.sourceCanvas.height);
   var radius = 0;
   for(var i=3; i<imgData.data.length; i+=4) {
-  	if(imgData.data[i] !== 0) {
+  	if(imgData.data[i] >= 128) {
     	var pos = (i-4);
       var x = (pos / 4) % this.sourceCanvas.width;
 			var y = Math.floor((pos / 4) / this.sourceCanvas.width);
@@ -211,13 +211,10 @@ TurningMachine.prototype.render = function(canvas) {
 
 TurningMachine.prototype.getBoundaryPoints = function(canvas) {
   var cvs = this.render(canvas);
-  //console.log(cvs)
   var ctx = cvs.getContext('2d')
   var imgData = ctx.getImageData(0,0,cvs.width, cvs.height);
   var result = {}
-  //var pxCount = 0
   var startPoint = null;
-  //console.log("imgdata length", imgData.data.length)
   for(var x = 1; x<cvs.width-1; x++) {
     for(var y = 1; y<cvs.height-1; y++) {
         var aidx = y * (cvs.width * 4) + x * 4 + 3    
@@ -279,5 +276,11 @@ TurningMachine.prototype.getBoundaryPoints = function(canvas) {
     }
   }.bind(this));
   //console.log(sorted)
+  console.log(sorted)
+  var simp = simplify(sorted, 0.005)
+  console.log(simp)
+
+  return simp
+
   return sorted
 }

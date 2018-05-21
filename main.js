@@ -26,13 +26,13 @@ function getOptions() {
 
 function setupUI() {
 	var tabs = document.getElementsByClassName("view-tab");
-		console.log(tabs);
 		for(var i=0; i<tabs.length; i++) {
 			var tab = tabs[i];
 			tab.addEventListener('click', function(evt) {
 				[].forEach.call(document.querySelectorAll('.view-pane'), function (el) {
 				  el.style.display = 'none';
 				});
+
 				console.log(evt.target.dataset)
 				var el = document.getElementById(evt.target.dataset.target);
 				el.style.display = 'block'
@@ -50,11 +50,16 @@ function makePart(options) {
 	}
 	// Draw the profile on the canvas
 	var ctx = canvas.getContext('2d')
-	//ctx.moveTo(center.x, center.y-30)
-	ctx.arc(center.x-18, center.y, 20, 0, TWOPI)
-	//ctx.moveTo(center.x, center.y+30)
-	ctx.arc(center.x+18, center.y, 20, 0, TWOPI)
+
+	// Double Helix
+	ctx.arc(center.x-70, center.y, 70, 0, TWOPI)
+	ctx.arc(center.x+70, center.y, 70, 0, TWOPI)
 	ctx.fill()
+	
+
+	// Square
+	//ctx.fillRect(center.x-100, center.y-100, 200, 200);
+
 
 	/*
 	ctx.beginPath()
@@ -77,16 +82,49 @@ function makePart(options) {
 	ctx.arc(center.x + R*Math.sin(DEG2RAD*0), center.y + R*Math.cos(DEG2RAD*0), 10, 0, TWOPI)
 	ctx.fill()
 */
-	var t = new TurningMachine(canvas, {
-	  bitDiameter : 0.125,
-	  stockDiameter : 1.15,
-	  length : LENGTH,
-	  turns : TURNS
-	});
+	var t = new TurningMachine(canvas, options);
 
 
 	t.render(document.getElementById('bitcvs'))
-	make3DModel(t);
+	var geom = make3DModel(t);
+
+	//var meshMaterial = new THREE.MeshLambertMaterial({ color: 0xc6aa79, side:THREE.DoubleSide})
+	//var meshMaterial = new THREE.MeshToonMaterial({color: 0xc6aa79, side:THREE.DoubleSide})
+	var meshMaterial = new THREE.MeshPhongMaterial({color: 0xc6aa79, side:THREE.DoubleSide})
+
+	var meshObject = new THREE.Mesh(geom, meshMaterial);
+
+	scene.add(meshObject);
+	//scene.add(pointsObject);
+
+	var object = meshObject;
+	object.rotation.x = TWOPI/4
+	var animate = function () {
+	        requestAnimationFrame( animate );
+
+	        //object.rotation.x += 0.01;
+	        //object.rotation.y += 0.01;
+
+	        renderer.render(scene, camera);
+	};
+
+	function animateControls() {
+
+		requestAnimationFrame( animateControls );
+
+		// required if controls.enableDamping or controls.autoRotate are set to true
+		controls.update();
+
+		renderer.render( scene, camera );
+
+	}
+
+	renderer.render(scene, camera)
+	camera.position.z = t.length*0.75;
+
+	//animateControls();
+	animate()
+
 }
 
 //function makeHelix(options) {
@@ -166,7 +204,7 @@ function setup3DView() {
 	scene.add(directionalLight);
 
 
-	//var controls = new THREE.OrbitControls( camera );
+	var controls = new THREE.OrbitControls( camera );
 
 	renderer.setSize( container.offsetWidth, container.offsetHeight );
 	container.appendChild( renderer.domElement );
@@ -204,64 +242,40 @@ function make3DModel(t) {
 		geom.vertices.push(point)
 	});
 
+	function createFaces(s, q,r) {
+		var a = (s*points.length) + q
+		var b = (s*points.length) + r
+		var c = (s+1)*points.length + q
+		var d = (s+1)*points.length + r
+		return [
+			new THREE.Face3(b,a,c),
+			new THREE.Face3(c,d,b)
+		]
+	}
+	
 	for(var s=0; s<STEPS-1; s++) {
 		for(var i=0; i<points.length-1; i++) {
-			a = (s*points.length) + i
-			b = (s*points.length) + i+1
-			c = (s+1)*points.length + i
-			d = (s+1)*points.length + i+1
-			geom.faces.push(new THREE.Face3(b,a,c))	
-			geom.faces.push(new THREE.Face3(c,d,b))	
+			var faces = createFaces(s, i, i+1);
+			geom.faces.push(faces[0])
+			geom.faces.push(faces[1])
 		}
+		faces = createFaces(s, 0, points.length-1)
+		geom.faces.push(faces[0])
+		geom.faces.push(faces[1])
 	}
+
 	geom.computeFaceNormals()
 	geom.translate(0,0,-t.length/2.0)
 
-
-	var pointsMaterial = new THREE.PointsMaterial( { color: 0x888888, size : 0.05 } );
-	var pointsObject = new THREE.Points( geom, pointsMaterial );
-
-	//var meshMaterial = new THREE.MeshBasicMaterial( { color: 0x00ff00, wireframe:true } );
-	var meshMaterial = new THREE.MeshLambertMaterial({ color: 0xc6aa79, side:THREE.DoubleSide})
-	var meshObject = new THREE.Mesh(geom, meshMaterial);
-
-	scene.add(meshObject);
-	//scene.add(pointsObject);
-
-	var object = meshObject;
-	object.rotation.x = TWOPI/4
-	var animate = function () {
-	        requestAnimationFrame( animate );
-
-	        object.rotation.x += 0.01;
-	        object.rotation.y += 0.01;
-
-	        renderer.render(scene, camera);
-	};
-
-	function animateControls() {
-
-		requestAnimationFrame( animateControls );
-
-		// required if controls.enableDamping or controls.autoRotate are set to true
-		controls.update();
-
-		renderer.render( scene, camera );
-
-	}
-
-	renderer.render(scene, camera)
-	camera.position.z = t.length*0.75;
-
-	//animateControls();
-	animate()
-
+	return geom
 }
 
 setupUI();
 setup3DView();
 
 document.getElementById('btn-update').addEventListener('click', function() {
-	makePart();
+	makePart(getOptions());
 });
-makePart({});
+
+
+makePart(getOptions());
