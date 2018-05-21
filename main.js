@@ -52,8 +52,8 @@ function makePart(options) {
 	var ctx = canvas.getContext('2d')
 
 	// Double Helix
-	ctx.arc(center.x-70, center.y, 70, 0, TWOPI)
-	ctx.arc(center.x+70, center.y, 70, 0, TWOPI)
+	ctx.arc(center.x-40, center.y, 70, 0, TWOPI)
+	ctx.arc(center.x+40, center.y, 70, 0, TWOPI)
 	ctx.fill()
 	
 
@@ -265,6 +265,7 @@ function make3DModel(t) {
 	}
 
 	geom.computeFaceNormals()
+	geom.computeVertexNormals()
 	geom.translate(0,0,-t.length/2.0)
 
 	return geom

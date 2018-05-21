@@ -11,7 +11,7 @@ function TurningMachine(sourceCanvas, options) {
 
   this.bitDiameter = options['bitDiameter'] || 0.125
   this.stockDiameter = options['stockDiameter'] || 1.15
-  this.turns = options['turns'] || 0.5
+  this.turns = options['turns'] || 1
   this.length = options['length'] || 6.0
 
   this._center = {x:this.sourceCanvas.width/2, y:this.sourceCanvas.height/2}
@@ -275,12 +275,41 @@ TurningMachine.prototype.getBoundaryPoints = function(canvas) {
       y : (pt[1]-cvs.height/2)/this._pixelsPerInch
     }
   }.bind(this));
-  //console.log(sorted)
-  console.log(sorted)
-  var simp = simplify(sorted, 0.005)
-  console.log(simp)
 
-  return simp
+  var start = sorted[0]
+  sorted = sorted.slice(0, sorted.length-1).concat(sorted.slice(0, sorted.length-1)).concat(sorted.slice(0, sorted.length-1))
+  var simp = simplify(sorted, 0.005);
+  console.log(simp)
+  var start_idx = Math.floor(simp.length/6);
+  var min_dist = 1000000
+  for(var i=Math.floor(simp.length/6); i<Math.floor(simp.length/2); i++) {
+    var a = simp[i]
+    console.log(a, start)
+    var dist = Math.sqrt((a.x-start.x)*(a.x-start.x) + (a.y-start.y)*(a.y-start.y));
+    if(dist < min_dist) {
+      min_dist = dist;
+      start_idx = i
+    }
+  }
+
+  var end_idx = Math.floor(simp.length/2);
+  var min_dist = 1000000
+  for(var i=Math.floor(simp.length/2); i<simp.length-Math.floor(simp.length/6); i++) {
+    var a = simp[i]
+    var dist = Math.sqrt((a.x-start.x)*(a.x-start.x) + (a.y-start.y)*(a.y-start.y));
+    if(dist < min_dist) {
+      min_dist = dist;
+      end_idx = i
+    }
+  }
+  console.log("start idx: " , start_idx)
+  console.log("end idx: " , end_idx)
+  console.log(simp)
+  var s = simp.slice(start_idx, end_idx)
+  console.log(s)
+  return s
+  //console.log(sorted)
+
 
   return sorted
 }
