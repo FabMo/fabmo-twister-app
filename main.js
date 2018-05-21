@@ -90,7 +90,7 @@ function makePart(options) {
 
 	//var meshMaterial = new THREE.MeshLambertMaterial({ color: 0xc6aa79, side:THREE.DoubleSide})
 	//var meshMaterial = new THREE.MeshToonMaterial({color: 0xc6aa79, side:THREE.DoubleSide})
-	var meshMaterial = new THREE.MeshPhongMaterial({color: 0xc6aa79, side:THREE.DoubleSide})
+	var meshMaterial = new THREE.MeshLambertMaterial({color: 0xc6aa79, side:THREE.DoubleSide})
 	var meshObject = new THREE.Mesh(geom, meshMaterial);
 	meshObject.name = 'subject'
 	scene.add(meshObject);
@@ -193,14 +193,16 @@ function setup3DView() {
 	renderer.setClearColor( 0xffffff, 1 );
 
 	var ambientLight = new THREE.AmbientLight( 0x404040, 1.0); // soft white light
-	var directionalLight = new THREE.DirectionalLight( 0xffffff, 2.0 );
+	var directionalLight = new THREE.DirectionalLight( 0xffffff, 1.0 );
 	var pointLight = new THREE.PointLight( 0xffffff, 2, 100 );
+	var hemisphereLight = new THREE.HemisphereLight(0xffffbb, 0x080820);
 
 	camera.add(pointLight)
 
-	scene.add(pointLight)
-	scene.add(ambientLight);
+	//scene.add(pointLight)
+	//scene.add(ambientLight);
 	scene.add(directionalLight);
+	scene.add(hemisphereLight);
 
 
 	//var controls = new THREE.OrbitControls( camera );
