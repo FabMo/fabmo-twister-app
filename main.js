@@ -18,6 +18,12 @@ function getOptions() {
 	for(var i=0; i<els.length; i++){
 		options[els[i].id.replace(/^(option-)/,"")] = parseFloat(els[i].value);
 	}
+
+	var els = document.getElementsByClassName('opt-select');
+	for(var i=0; i<els.length; i++){
+		options[els[i].id.replace(/^(option-)/,"")] = els[i].value;
+	}
+
 	console.info(options)
 	return options;
 }
@@ -39,6 +45,9 @@ function setupUI() {
 }
 
 function makePart(options) {
+	var options = options || {}
+	options.type = options['type'] || 'helix'
+
 	var canvas = document.getElementById('cvs')
 	canvas.width = WIDTH
 	canvas.height = HEIGHT
@@ -50,9 +59,20 @@ function makePart(options) {
 	var ctx = canvas.getContext('2d')
 
 	// Double Helix
-	ctx.arc(center.x-50, center.y, 80, 0, TWOPI)
-	ctx.arc(center.x+50, center.y, 80, 0, TWOPI)
-	ctx.fill()
+	switch(options.type) {
+		case 'helix':
+			ctx.arc(center.x-50, center.y, 80, 0, TWOPI)
+			ctx.arc(center.x+50, center.y, 80, 0, TWOPI)
+			ctx.fill()
+			break;
+		case 'square':
+			ctx.fillRect(center.x-100, center.y-100, 200, 200);
+			break;
+		case 'corkscrew':
+			ctx.fillRect(center.x-100, center.y-10, 200, 20);
+			break;
+
+	}
 	
 
 	// Square
