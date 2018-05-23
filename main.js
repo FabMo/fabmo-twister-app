@@ -61,8 +61,8 @@ function makePart(options) {
 	// Double Helix
 	switch(options.type) {
 		case 'helix':
-			ctx.arc(center.x-50, center.y, 80, 0, TWOPI)
-			ctx.arc(center.x+50, center.y, 80, 0, TWOPI)
+			ctx.arc(center.x-50, center.y, 55, 0, TWOPI)
+			ctx.arc(center.x+50, center.y, 55, 0, TWOPI)
 			ctx.fill()
 			break;
 		case 'square':
