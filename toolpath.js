@@ -11,7 +11,7 @@ function TurningMachine(sourceCanvas, options) {
 
   this.bitDiameter = options['bitDiameter'] || 0.125
   this.stockDiameter = options['stockDiameter'] || 1.15
-  this.turns = options['turns'] || 1
+  this.turns = options['turns'] || 0
   this.length = options['length'] || 6.0
 
   this._center = {x:this.sourceCanvas.width/2, y:this.sourceCanvas.height/2}

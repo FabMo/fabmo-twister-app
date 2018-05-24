@@ -71,6 +71,14 @@ function makePart(options) {
 		case 'corkscrew':
 			ctx.fillRect(center.x-100, center.y-10, 200, 20);
 			break;
+		case 'naca63412':
+			var img=document.getElementById("naca63412-img");
+    		ctx.drawImage(img,0,0);
+    		break;
+		case 'naca4415':
+			var img=document.getElementById("naca4415-img");
+    		ctx.drawImage(img,0,0);
+    		break;
 
 	}
 	
