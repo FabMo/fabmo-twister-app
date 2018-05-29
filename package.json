@@ -1,0 +1,16 @@
+{
+  "name": "TurningMachine",
+  "repository" : "https://github.com/FabMo/fabmo-twister-app.git",
+  "license" : "MIT",
+  "main": "./index.html",
+  "icon": "icon.png",
+  "icon_color": "black",
+  "version": "1.0.0",
+  "author": "Ryan Sturmer",
+  "website": "http://www.shopbottools.com",
+  "description": "Cut auto-generated turning surfaces",
+  "devDependencies": {
+    "grunt": "^0.4.5",
+    "grunt-zip": "^0.17.1"
+  }
+}

@@ -7,7 +7,9 @@ var TWOPI = 2.0*Math.PI
 
 var scene, camera, renderer;
 var turningMachine;
+var currentPane = 'canvas3d';
 
+var fabmo = new FabMoDashboard();
 function write(s) {
   document.getElementById('output').innerHTML = s
 }
@@ -27,19 +29,25 @@ function getOptions() {
 	console.info(options)
 	return options;
 }
+function showPane(name) {
+	currentPane = name;
+	[].forEach.call(document.querySelectorAll('.view-pane'), function (el) {
+	  el.style.display = 'none';
+	});
+	var el = document.getElementById(name);
+	el.style.display = 'block'
+}
 
 function setupUI() {
 	var tabs = document.getElementsByClassName("view-tab");
 		for(var i=0; i<tabs.length; i++) {
 			var tab = tabs[i];
 			tab.addEventListener('click', function(evt) {
-				[].forEach.call(document.querySelectorAll('.view-pane'), function (el) {
-				  el.style.display = 'none';
-				});
-
-				console.log(evt.target.dataset)
-				var el = document.getElementById(evt.target.dataset.target);
-				el.style.display = 'block'
+				showPane(evt.target.dataset.target);
+					[].forEach.call(document.querySelectorAll('.view-tab'), function (el) {
+	  					el.classList.remove('is-active');
+					});
+				tab.classList.add('is-active');
 			});
 		}
 }
@@ -331,13 +339,32 @@ function make3DModel(t) {
 	return retval
 }
 
-setupUI();
-setup3DView();
-
 document.getElementById('btn-update').addEventListener('click', function() {
-	makePart(getOptions());
-	write(turningMachine.postSBP())
+	var savedPane = currentPane;
+	if(savedPane === 'intro') {
+		savedPane = 'canvas3d';
+	}
+	showPane('spinner');
+	setTimeout(function() {
+		makePart(getOptions());
+		write(turningMachine.postSBP())
+		showPane(savedPane)
+
+	}, 100)
 });
 
 
-makePart(getOptions());
+document.getElementById('btn-make').addEventListener('click', function() {
+	var s = turningMachine.postSBP();
+	fabmo.submitJob({
+    	file : s.join('\n'),
+    	filename : "turning-machine.sbp",
+    	description : "Indexer project from the universal turning machine"
+	});     
+})
+
+setupUI();
+setup3DView();
+showPane('intro')
+
+//makePart(getOptions());

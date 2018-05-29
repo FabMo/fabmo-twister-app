@@ -195,9 +195,9 @@ TurningMachine.prototype.render = function(canvas) {
   while(theta < TWOPI) {
     var depth = this._pixelsPerInch*getDepth(this.crossSection, theta);
     //console.log(depth)
-    ctx.fillStyle = 'rgba(0,0,64,255)'
+    ctx.fillStyle = 'rgba(255,255,255,255)'
     ctx.fillRect(this._center.x-this._bitDiameterPx/2,
-      this._center.y + depth + this._bitDiameterPx/2,this._bitDiameterPx,2*this._center.y)
+    this._center.y + depth + this._bitDiameterPx/2,this._bitDiameterPx,2*this._center.y)
     ctx.beginPath()
     ctx.arc(this._center.x,this._center.y + depth + this._bitDiameterPx/2,this._bitDiameterPx/2,0,TWOPI)
     ctx.fill()
@@ -206,6 +206,7 @@ TurningMachine.prototype.render = function(canvas) {
     ctx.translate(-this._center.x,-this._center.y)
     theta += 0.5*DEG2RAD;
   }
+
   return canvas
 }
 
