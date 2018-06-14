@@ -69,9 +69,13 @@ function makePart(options) {
 	// Double Helix
 	switch(options.type) {
 		case 'helix':
-			ctx.arc(center.x-50, center.y, 55, 0, TWOPI)
-			ctx.arc(center.x+50, center.y, 55, 0, TWOPI)
+			ctx.arc(center.x, center.y-50, 55, 0, TWOPI)
+			ctx.arc(center.x, center.y+50, 55, 0, TWOPI)
 			ctx.fill()
+			break;
+		case 'twist':
+			ctx.arc(center.x, center.y-50, 55, 0, TWOPI);
+			ctx.fill();
 			break;
 		case 'square':
 			ctx.fillRect(center.x-100, center.y-100, 200, 200);
@@ -87,6 +91,7 @@ function makePart(options) {
 			var img=document.getElementById("naca4415-img");
     		ctx.drawImage(img,0,0);
     		break;
+
 
 	}
 	
