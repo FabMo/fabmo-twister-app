@@ -10,10 +10,22 @@ var turningMachine;
 var currentPane = 'canvas3d';
 
 var fabmo = new FabMoDashboard();
+
+// Writes a string to the "code" tab
 function write(s) {
+	console.info(s);
   document.getElementById('output').innerHTML = s
 }
 
+/*
+ * Get the user selected options from the UI
+ * This is done by selecting all of the elements that have the class opt-num or opt-select
+ * and extracting their values.  The id of each option found in this way determines the key
+ * that is used in the map returned by that option.  So:
+ * <input id="option-width" class="opt-num" />
+ * would produce
+ * {width : 0.5} // (if the value of the input was 0.5)
+ */
 function getOptions() {
 	var els = document.getElementsByClassName('opt-num');
 	options = {}
@@ -29,7 +41,12 @@ function getOptions() {
 	console.info(options)
 	return options;
 }
-function showPane(name) {
+
+/*
+ * Show the specified view pane. (by element id) The right side of the UI is organized into panes, 
+ * and only one of them is visible at a time. 
+ */
+function showViewPane(name) {
 	currentPane = name;
 	[].forEach.call(document.querySelectorAll('.view-pane'), function (el) {
 	  el.style.display = 'none';
@@ -38,18 +55,46 @@ function showPane(name) {
 	el.style.display = 'block'
 }
 
+/*
+ * Show the specified settings pane. (by element id) The left side of the UI is organized into panes, 
+ * and only one of them is visible at a time. 
+ */
+function showSettingsPane(name) {
+	currentPane = name;
+	[].forEach.call(document.querySelectorAll('.settings-pane'), function (el) {
+	  el.style.display = 'none';
+	});
+	var el = document.getElementById(name);
+	el.style.display = 'block'
+}
+
+/* 
+ * One-time setup of events for the UI
+ */
 function setupUI() {
+	// Add a click listener for each tab to show the corresponding view pane.  (Set by the data-target for each pane)
 	var tabs = document.getElementsByClassName("view-tab");
 		for(var i=0; i<tabs.length; i++) {
 			var tab = tabs[i];
 			tab.addEventListener('click', function(evt) {
-				showPane(evt.target.dataset.target);
-					[].forEach.call(document.querySelectorAll('.view-tab'), function (el) {
-	  					el.classList.remove('is-active');
-					});
-				tab.classList.add('is-active');
+			showViewPane(evt.target.dataset.target);
+			[].forEach.call(document.querySelectorAll('.view-tab'), function (el) {
+				el.classList.remove('is-active');							
 			});
-		}
+			evt.target.parentElement.classList.add('is-active');		
+		});
+	}
+	tabs = document.getElementsByClassName("settings-tab");
+		for(var i=0; i<tabs.length; i++) {
+			var tab = tabs[i];
+			tab.addEventListener('click', function(evt) {
+			showSettingsPane(evt.target.dataset.target);
+			[].forEach.call(document.querySelectorAll('.settings-tab'), function (el) {
+				el.classList.remove('is-active');							
+			});
+			evt.target.parentElement.classList.add('is-active');		
+		});
+	}
 }
 
 function makePart(options) {
@@ -91,36 +136,9 @@ function makePart(options) {
 			var img=document.getElementById("naca4415-img");
     		ctx.drawImage(img,0,0);
     		break;
-
-
 	}
 	
 
-	// Square
-	//ctx.fillRect(center.x-100, center.y-100, 200, 200);
-
-
-	/*
-	ctx.beginPath()
-	ctx.fillRect(center.x-5, center.y-40, 10, 80)
-	ctx.fillRect(center.x-40, center.y-5, 80, 10)
-	ctx.arc(center.x, center.y, 15, 0, TWOPI)
-	ctx.fill()
-*/
-/*
-	R = 50
-	ctx.beginPath()
-	ctx.moveTo(center.x + R*Math.sin(DEG2RAD*120.0), center.y + R*Math.cos(DEG2RAD*120.0))
-	ctx.arc(center.x + R*Math.sin(DEG2RAD*120.0), center.y + R*Math.cos(DEG2RAD*120.0), 10, 0, TWOPI)
-
-	ctx.moveTo(center.x + R*Math.sin(DEG2RAD*240.0), center.y + R*Math.cos(DEG2RAD*240.0))
-	ctx.arc(center.x + R*Math.sin(DEG2RAD*240.0), center.y + R*Math.cos(DEG2RAD*240.0), 10, 0, TWOPI)
-	ctx.fill()
-
-	ctx.moveTo(center.x + R*Math.sin(DEG2RAD*0), center.y + R*Math.cos(DEG2RAD*0))
-	ctx.arc(center.x + R*Math.sin(DEG2RAD*0), center.y + R*Math.cos(DEG2RAD*0), 10, 0, TWOPI)
-	ctx.fill()
-*/
 	turningMachine = new TurningMachine(canvas, options);
 
 
@@ -331,9 +349,6 @@ function make3DModel(t) {
 	//console.log('c1uvs: ', c1.faceVertexUvs)
 
 	//c1.updateMatrix()
-
-
-
 	var retval = new THREE.Geometry()
 
 	retval.merge(geom, geom.matrix)
@@ -349,11 +364,11 @@ document.getElementById('btn-update').addEventListener('click', function() {
 	if(savedPane === 'intro') {
 		savedPane = 'canvas3d';
 	}
-	showPane('spinner');
+	showViewPane('spinner');
 	setTimeout(function() {
 		makePart(getOptions());
-		write(turningMachine.postSBP())
-		showPane(savedPane)
+		write(turningMachine.postSBP().join('\n'))
+		showViewPane(savedPane)
 
 	}, 100)
 });
@@ -370,6 +385,6 @@ document.getElementById('btn-make').addEventListener('click', function() {
 
 setupUI();
 setup3DView();
-showPane('intro')
+showViewPane('intro')
 
 //makePart(getOptions());

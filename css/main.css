@@ -1,4 +1,9 @@
 #output {
 	font-family: monospace;
 	font-size: 9px;
+	white-space: pre-line;
+	background-color: #118283;
+	color: white;
+	padding: 10px;
+	border-radius: 10px;
 }
